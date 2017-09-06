@@ -1,33 +1,33 @@
-# CQHTTP
+# CQHTTP ([English](/README.en,md))
 
-This gem can make you use [richardchien/coolq-http-api](https://github.com/richardchien/coolq-http-api) in ruby.
+在 ruby 中使用 [richardchien/coolq-http-api](https://github.com/richardchien/coolq-http-api)。
 
-## Installation
+## 安装
 
-Add this line to your application's Gemfile:
+在你的应用的 `Gemfile` 加入这行：
 
 ```ruby
 gem 'CQHTTP'
 ```
 
-And then execute:
+然后运行：
 
     $ bundle
 
-Or install it yourself as:
+或者你自己安装
 
     $ gem install CQHTTP
 
-## Usage
+## 使用
 
-TODO: Write usage instructions here
+TODO: 写使用说明
 
-## Development
+## 开发
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+检出这个仓库后，运行 `bin/setup` 来安装依赖关系。然后，运行 `rake spec` 来运行测试。 您还可以运行 `bin/console` 启动交互式提示符(`irb`)，让您进行实验。
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+要将此 gem 安装到本机上，请运行 `bundle exec rake install`。 要释出新版本，请在 `version.rb` 中更新版本号，然后运行 `bundle exec rake release`，该版本将为该版本创建一个 git 标签，并推送 git 提交和标签，然后将 `.gem` 文件提交到 [rubygems.org]（https://rubygems.org）。
 
-## Contributing
+## 贡献
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/71e6fd52/cqhttp-ruby
+欢迎来 [GitHub](https://github.com/71e6fd52/cqhttp-ruby) 上发起 issues 和 pull requests
