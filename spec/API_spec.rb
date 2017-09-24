@@ -98,7 +98,7 @@ List = JSON.parse '{
 
 RSpec.describe CQHTTP::API do
   before :all do
-    @api = CQHTTP::API.new
+    @api = CQHTTP::API.new way: :get
   end
 
   it 'returns a CQHTTP:API object' do
