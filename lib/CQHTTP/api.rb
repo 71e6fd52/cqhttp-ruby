@@ -11,7 +11,7 @@ module CQHTTP
       @func_list = {}
       gen
       @func_list.freeze
-      @network = CQHTTP.Network.gen way, host
+      @network = CQHTTP::Network.gen way, host
     end
 
     def respond_to_missing?(method, include_private = false)
