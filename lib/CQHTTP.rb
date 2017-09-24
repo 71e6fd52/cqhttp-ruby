@@ -1,5 +1,4 @@
-require "CQHTTP/version"
+require 'CQHTTP/version'
 
-module CQHTTP
-  # Your code goes here...
-end
+require 'CQHTTP/api.rb'
+require 'CQHTTP/network.rb'

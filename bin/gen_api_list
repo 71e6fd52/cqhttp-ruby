@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'CQHTTP/api.rb'
+require 'json'
+
+a = CQHTTP::API.new
+puts a.func_list.to_json

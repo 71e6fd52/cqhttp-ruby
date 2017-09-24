@@ -1,5 +1,5 @@
-require "bundler/setup"
-require "CQHTTP"
+require 'bundler/setup'
+require 'CQHTTP'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
