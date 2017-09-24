@@ -3,11 +3,6 @@ require 'spec_helper'
 RSpec.describe CQHTTP::Network do
   before :all do
     @res = Struct.new(:code, :body)
-    module Net
-      def self.unset
-        remove_const(:HTTP) if const_defined? :HTTP
-      end
-    end
   end
 
   it 'returns three Proc object' do

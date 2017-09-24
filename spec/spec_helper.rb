@@ -12,3 +12,9 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+module Net
+  def self.unset
+    remove_const(:HTTP) if const_defined? :HTTP
+  end
+end
