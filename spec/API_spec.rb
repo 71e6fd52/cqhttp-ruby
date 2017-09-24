@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'json'
 
 List = JSON.parse '{
   "get_login_info": {},
@@ -114,5 +113,16 @@ RSpec.describe CQHTTP::API do
     it 'respond to' + func.to_s do
       expect(@api.respond_to?(func)).to be true
     end
+  end
+
+  it 'can work' do
+    @res = Struct.new(:code, :body)
+    http = spy('Net::HTTP', get_response: @res.new(200, '{}'))
+    module Net; end
+    Net::HTTP = http
+    expect(@api.send_group_msg('123456', 'test')).to eq({})
+    expect(http).to have_received(:get_response).with(
+      URI('http://localhost:5700/send_group_msg?group_id=123456&message=test&is_raw=false')
+    )
   end
 end

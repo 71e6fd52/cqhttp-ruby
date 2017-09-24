@@ -18,22 +18,14 @@ module CQHTTP
       @func_list.include?(method) || super
     end
 
-    def method_missing(name, *args)
-      super unless api_call name, args
-    end
+    def method_missing(name, *user_args)
+      return super unless respond_to_missing? name
 
-    def api_call(name, user_args)
-      return unless respond_to_missing? name
-
-      args = gen_args user_args
+      args = gen_args name, user_args
       args.freeze
-
-      return if args.nil?
-      return if args.value?
-
+      return super if args.nil?
+      return super if args.value? nil
       call_network name, args
-
-      true
     end
 
     private
@@ -42,25 +34,23 @@ module CQHTTP
     #                             api_call                             #
     ####################################################################
 
-    def gen_args(user_args)
-      args = @func_list[name.to_stm]
-
+    def gen_args(name, user_args)
+      args = @func_list[name.to_sym]
+      return {} if args == {}
       return hash_to_args(args, user) if user_args[0].class == {}.class
-      array_to_args(args, user)
+      array_to_args(args, user_args)
     end
 
     def hash_to_args(default, user)
       return unless user.size == 1
-      default.merge(user[1].delete_if { |key, _value| !args.key? key })
+      default.merge(user[0].delete_if { |key, _value| !default.key? key })
     end
 
     def array_to_args(default, user)
       return if user.size > default.size
-      it = default.each
-      args = user.each_with_object({}) do |value, obj|
-        obj[it.next] = value
-      end
-      hash_to_args default, args
+      it = default.each_key
+      args = user.each_with_object({}) { |value, obj| obj[it.next] = value }
+      hash_to_args default, [args]
     end
 
     def call_network(name, args)

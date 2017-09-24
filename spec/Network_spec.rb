@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'json'
 
 RSpec.describe CQHTTP::Network do
   before :all do
