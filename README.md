@@ -1,4 +1,4 @@
-# CQHTTP ([English](/README.en,md))
+# CQHTTP ([English](/README.en.md))
 
 在 ruby 中使用 [richardchien/coolq-http-api](https://github.com/richardchien/coolq-http-api)。
 
