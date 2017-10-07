@@ -37,7 +37,7 @@ module CQHTTP
     def gen_args(name, user_args)
       args = @func_list[name.to_sym]
       return {} if args == {}
-      return hash_to_args(args, user) if user_args[0].class == {}.class
+      return hash_to_args(args, user_args) if user_args[0].class == {}.class
       array_to_args(args, user_args)
     end
 
