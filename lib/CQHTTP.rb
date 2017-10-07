@@ -1,7 +1,8 @@
 require 'CQHTTP/version'
 
-require 'CQHTTP/api.rb'
-require 'CQHTTP/network.rb'
+require 'CQHTTP/api'
+require 'CQHTTP/network'
+require 'CQHTTP/service'
 
 require 'uri'
 require 'net/http'

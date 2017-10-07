@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+
+require 'CQHTTP'
+require 'dbus'
+Thread.abort_on_exception = true
+
+# DBus
+class CQHTTP2DBus < DBus::Object
+  dbus_interface 'org.dastudio.cqhttp' do
+    dbus_signal :message, 'message_type:s, json:s'
+    dbus_signal :event, 'event:s, json:s'
+    dbus_signal :friend_request, 'json:s'
+    dbus_signal :join_request, 'json:s'
+    dbus_signal :invite_request, 'json:s'
+    dbus_signal :all, 'json:s'
+    dbus_signal :unknow, 'json:s'
+  end
+end
+
+def cqhttp2dbus(c, obj)
+  j = c.json
+  obj.all j.to_json
+  case j['post_type']
+  when 'message' then obj.message j['message_type'], j.to_json
+  when 'event' then obj.event j['event'], j.to_json
+  when 'request'
+    case j['request_type']
+    when 'friend' then obj.friend_request j.to_json
+    when 'group'
+      case j['sub_type']
+      when 'add' then obj.join_request j.to_json
+      when 'invite' then obj.invite_request j.to_json
+      else obj.unknow j.to_json
+      end
+    else obj.unknow j.to_json
+    end
+  else obj.unknow j.to_json
+  end
+end
+
+bus = DBus::SessionBus.instance
+service = bus.request_service 'org.dastudio.qq'
+obj = CQHTTP2DBus.new '/org/dastudio/qq'
+service.export obj
+
+cqhttp = CQHTTP::Service.new
+cqhttp.bind ->(c) { cqhttp2dbus c, obj }
+
+Thread.new { cqhttp.run }
+
+main = DBus::Main.new
+main << bus
+main.run
