@@ -11,8 +11,11 @@ class CQHTTP2DBus < DBus::Object
     super
   end
   dbus_interface 'org.dastudio.cqhttp' do
-    dbus_method :call, 'in func:s, in args:s' do |func, args|
-      @cqhttp.send func, JSON.parse(args, symbolize_names: true)
+    dbus_method :call, 'in func:s, in args:s, out json:s' do |func, args|
+      JSON.pretty_generate @cqhttp.send func, JSON.parse(
+        args,
+        symbolize_names: true
+      )
     end
 
     %i[
