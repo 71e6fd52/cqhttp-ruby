@@ -26,7 +26,7 @@ class CQHTTP2DBus < DBus::Object
       group_decrease
       group_increase
       friend_add
-    ].each do
+    ].each do |i|
       dbus_signal i, 'json:s'
     end
     dbus_signal :friend_request, 'json:s'
