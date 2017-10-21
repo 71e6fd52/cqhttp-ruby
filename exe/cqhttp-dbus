@@ -15,25 +15,25 @@ class CQHTTP2DBus < DBus::Object
       @cqhttp.send func, JSON.parse(args, symbolize_names: true)
     end
 
-    dbus_signal :message, 'message_type:s, json:s'
-    %i[private group get_group_list].each do |i|
-      dbus_signal i, 'json:s'
-    end
-    dbus_signal :event, 'event:s, json:s'
     %i[
+      message
+      private
+      group
+      get_group_list
+      event
       group_upload
       group_admin
       group_decrease
       group_increase
       friend_add
+      friend_request
+      join_request
+      invite_request
+      all
+      unknow
     ].each do |i|
       dbus_signal i, 'json:s'
     end
-    dbus_signal :friend_request, 'json:s'
-    dbus_signal :join_request, 'json:s'
-    dbus_signal :invite_request, 'json:s'
-    dbus_signal :all, 'json:s'
-    dbus_signal :unknow, 'json:s'
   end
 end
 
