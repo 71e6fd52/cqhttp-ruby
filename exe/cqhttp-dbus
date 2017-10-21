@@ -11,6 +11,12 @@ class CQHTTP2DBus < DBus::Object
     super
   end
   dbus_interface 'org.dastudio.cqhttp' do
+    @cqhttp.func_list.each_key do |func|
+      dbus_method func, 'in args:s' do |args|
+        @cqhttp.method_missing func.to_sym, JSON.parse(args, symbolize_names: true)
+      end
+    end
+
     dbus_method :call, 'in func:s, in args:s' do |func, args|
       @cqhttp.method_missing func.to_sym, JSON.parse(args, symbolize_names: true)
     end
