@@ -16,7 +16,7 @@ module CQHTTP
       loop do
         socket = @server.accept
 
-        head socket if $VERBOSE
+        head socket
 
         socket.print "HTTP/1.1 204\r\nContent-Type: application/json\r\n\r\n"
         data = socket.gets
@@ -31,12 +31,12 @@ module CQHTTP
     private
 
     def head(socket)
-      puts 'head'
+      puts 'head' if $VERBOSE
       while (line = socket.gets) != "\r\n"
-        print '  '
-        puts line
+        print '  ' if $VERBOSE
+        puts line if $VERBOSE
       end
-      puts 'end'
+      puts 'end' if $VERBOSE
     end
   end
 end
