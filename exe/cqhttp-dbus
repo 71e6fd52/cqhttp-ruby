@@ -16,7 +16,19 @@ class CQHTTP2DBus < DBus::Object
     end
 
     dbus_signal :message, 'message_type:s, json:s'
+    %i[private group get_group_list].each do |i|
+      dbus_signal i, 'json:s'
+    end
     dbus_signal :event, 'event:s, json:s'
+    %i[
+      group_upload
+      group_admin
+      group_decrease
+      group_increase
+      friend_add
+    ].each do
+      dbus_signal i, 'json:s'
+    end
     dbus_signal :friend_request, 'json:s'
     dbus_signal :join_request, 'json:s'
     dbus_signal :invite_request, 'json:s'
@@ -57,10 +69,12 @@ class Case
 
   def message
     @obj.message @info['message_type'], @json
+    send_json @info['message_type']
   end
 
   def event
     @obj.event @info['event'], @json
+    send_json @info['event']
   end
 
   def request
