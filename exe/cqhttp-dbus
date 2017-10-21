@@ -68,12 +68,12 @@ class Case
   end
 
   def message
-    @obj.message @info['message_type'], @json
+    send_json :message
     send_json @info['message_type']
   end
 
   def event
-    @obj.event @info['event'], @json
+    send_json :event
     send_json @info['event']
   end
 
