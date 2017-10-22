@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe CQHTTP::Network do
   before :all do
     @res = Struct.new(:code, :body)

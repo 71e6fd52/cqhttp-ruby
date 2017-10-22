@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe CQHTTP::API do
   before :all do
     @res = Struct.new(:code, :body)
@@ -54,7 +55,7 @@ RSpec.describe CQHTTP::API do
         expect(@api.send_group_msg('123456', 'test')).to eq({})
         expect(http).to have_received(:post_form).with(
           URI('http://localhost:5700/send_group_msg'),
-          { group_id: '123456', message: 'test', is_raw: false }
+          group_id: '123456', message: 'test', is_raw: false
         )
       end
     end
