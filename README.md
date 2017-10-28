@@ -22,6 +22,12 @@ gem 'CQHTTP'
 
 TODO: 写使用说明
 
+### D-Bus
+
+Service: `org.dastudio.qq`
+Object path: `/org/dastudio/qq`
+Interface: `org.dastudio.cqhttp`
+
 ## 开发
 
 检出这个仓库后，运行 `bin/setup` 来安装依赖关系。然后，运行 `rake spec` 来运行测试。 您还可以运行 `bin/console` 启动交互式提示符(`irb`)，让您进行实验。
