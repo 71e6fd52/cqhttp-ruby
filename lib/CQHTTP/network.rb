@@ -23,8 +23,8 @@ module CQHTTP
     # uri: URI
     # params (optional): Hash, url query
     def self.get(uri, params = nil) # => Hash
-      puts 'GET URL:', uri if $DEBUG
       uri.query = URI.encode_www_form params if params
+      puts 'GET URL:', uri if $DEBUG
       error Net::HTTP.get_response(uri)
     end
 
@@ -43,6 +43,7 @@ module CQHTTP
     # body: Hash, post body
     def self.post_json(uri, body)
       puts 'POST URL:', uri if $DEBUG
+      puts 'POST JSON:', JSON.pretty_generate(body) if $DEBUG
       error Net::HTTP.post(
         uri,
         body.to_json,
