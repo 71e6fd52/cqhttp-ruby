@@ -7,7 +7,7 @@ module CQHTTP
     #
     # host: String: API address, like 'http://localhost:5700'
     # type: Symbol or String, 'get', 'form' or 'json;
-    def initialize(host: 'http://localhost:5700', way: :form)
+    def initialize(host: 'http://localhost:5700', way: :json)
       @func_list = {}
       gen
       @func_list.freeze
