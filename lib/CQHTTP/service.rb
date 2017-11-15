@@ -15,17 +15,23 @@ module CQHTTP
     def run
       loop do
         socket = @server.accept
-
-        head socket
-
-        socket.print "HTTP/1.1 204\r\nContent-Type: application/json\r\n\r\n"
-        data = socket.gets
-        @json = JSON.parse data
-
-        @event_method.each { |func| func.call self }
-
-        socket.close
+        accept socket
       end
+    end
+
+    def accept(socket)
+      head socket
+
+      socket.print "HTTP/1.1 204\r\n" \
+        "Content-Type: application/json\r\n" \
+        "Connection: Close\r\n\r\n"
+      data = socket.gets
+      puts data
+      @json = JSON.parse data
+
+      @event_method.each { |func| func.call self }
+
+      socket.close
     end
 
     private
