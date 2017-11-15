@@ -1,6 +1,7 @@
 # CQHTTP ([English](/README.en.md))
 
 在 ruby 中使用 [richardchien/coolq-http-api](https://github.com/richardchien/coolq-http-api)。
+并提供 DASSMEP 服务端。
 
 ## 安装
 
@@ -21,12 +22,6 @@ gem 'CQHTTP'
 ## 使用
 
 TODO: 写使用说明
-
-### D-Bus
-
-Service: `org.dastudio.qq`
-Object path: `/org/dastudio/qq`
-Interface: `org.dastudio.cqhttp`
 
 ## 开发
 
