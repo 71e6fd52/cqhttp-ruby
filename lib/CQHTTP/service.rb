@@ -1,5 +1,4 @@
 module CQHTTP
-  # TODO
   class Service
     attr_reader :json
 
