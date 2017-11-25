@@ -71,6 +71,7 @@ module CQHTTP
     def self.coolq_error(json)
       case json['retcode'].to_i
       when 0 then return json
+      when 1 then return json
       when 100 then raise '参数错误'
       when 102 then raise '没有权限'
       end
