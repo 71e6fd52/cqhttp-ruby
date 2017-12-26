@@ -7,41 +7,37 @@ module CQHTTP
   module Network
     # gen lambda
     #
-    # type: Symbol or String, 'get', 'form' or 'json;
-    # host: String: API address, like 'http://localhost:5700'
-    def self.gen(type, host) # => lambda
+    # @param [Symbol or String] type 'get', 'form' or 'json
+    # @param [String] host API address, like 'http://localhost:5700'
+    #
+    # @return [lambda]
+    def self.gen(type, host)
       case type.to_sym
       when :get then ->(url, param = nil) { Network.get URI(host + url), param }
-      when :form then ->(url, body) { Network.post_form URI(host + url), body }
-      when :json then ->(url, body) { Network.post_json URI(host + url), body }
+      when :post then ->(url, body) { Network.post URI(host + url), body }
       else raise type
       end
     end
 
     # get url
     #
-    # uri: URI
-    # params (optional): Hash, url query
-    def self.get(uri, params = nil) # => Hash
+    # @param [URI] uri
+    # @param [Hash] params (optional) url query
+    #
+    # @return [Hash]
+    def self.get(uri, params = nil)
       uri.query = URI.encode_www_form params if params
       puts 'GET URL:', uri if $DEBUG
       error Net::HTTP.get_response(uri)
     end
 
-    # post to url by form
-    #
-    # uri: URI
-    # body: Hash, post body
-    def self.post_form(uri, body) # => Hash
-      puts 'POST URL:', uri if $DEBUG
-      error Net::HTTP.post_form(uri, body)
-    end
-
     # post to url by json
     #
-    # uri: URI
-    # body: Hash, post body
-    def self.post_json(uri, body)
+    # @param [URI] uri
+    # @param [Hash] body post body
+    #
+    # @return Hash
+    def self.post(uri, body)
       puts 'POST URL:', uri if $DEBUG
       puts 'POST JSON:', JSON.pretty_generate(body) if $DEBUG
       error Net::HTTP.post(

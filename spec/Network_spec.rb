@@ -6,13 +6,14 @@ RSpec.describe CQHTTP::Network do
     @res = Struct.new(:code, :body)
   end
 
-  it 'returns three Proc object' do
+  it 'can return get as Proc object' do
     get = CQHTTP::Network.gen :get, ''
-    json = CQHTTP::Network.gen :json, ''
-    form = CQHTTP::Network.gen :form, ''
     expect(get).to be_an_instance_of Proc
-    expect(json).to be_an_instance_of Proc
-    expect(form).to be_an_instance_of Proc
+  end
+
+  it 'can return post as Proc object' do
+    post = CQHTTP::Network.gen :post, ''
+    expect(post).to be_an_instance_of Proc
   end
 
   shared_examples 'clean' do
@@ -84,42 +85,12 @@ RSpec.describe CQHTTP::Network do
     end
   end
 
-  describe '#post_form' do
+  describe '#post' do
     include_examples 'clean'
     include_examples 'error'
 
     before :all do
-      @method = CQHTTP::Network.gen :form, 'http://localhost'
-      @request_name = :post_form
-    end
-
-    describe 'can work with' do
-      include_examples 'work',
-                       'number',
-                       { a: 1 },
-                       [URI('http://localhost/a'), { a: 1 }]
-
-      include_examples 'work',
-                       'number and float',
-                       { i: 1, f: 4.8 },
-                       [URI('http://localhost/a'), { i: 1, f: 4.8 }]
-
-      include_examples 'work',
-                       'number and two string',
-                       { i: 1, str1: 'test', other: 'another' },
-                       [
-                         URI('http://localhost/a'),
-                         { i: 1, str1: 'test', other: 'another' }
-                       ]
-    end
-  end
-
-  describe '#post_lson' do
-    include_examples 'clean'
-    include_examples 'error'
-
-    before :all do
-      @method = CQHTTP::Network.gen :json, 'http://localhost'
+      @method = CQHTTP::Network.gen :post, 'http://localhost'
       @request_name = :post
     end
 
