@@ -21,8 +21,8 @@ module CQHTTP
 
     # get url
     #
-    # @param [URI] uri
-    # @param [Hash] params (optional) url query
+    # @param uri [URI]
+    # @param params [Hash] url query
     #
     # @return [Hash]
     def self.get(uri, params = nil)
@@ -36,7 +36,7 @@ module CQHTTP
     # @param [URI] uri
     # @param [Hash] body post body
     #
-    # @return Hash
+    # @return [Hash]
     def self.post(uri, body)
       puts 'POST URL:', uri if $DEBUG
       puts 'POST JSON:', JSON.pretty_generate(body) if $DEBUG
@@ -49,10 +49,12 @@ module CQHTTP
 
     private_class_method
 
+    # @!visibility private
     def self.error(res)
       coolq_error http_error res
     end
 
+    # @!visibility private
     def self.http_error(res)
       case res.code.to_i
       when 200 then return JSON.parse res.body
@@ -64,6 +66,7 @@ module CQHTTP
       raise res.code.to_s
     end
 
+    # @!visibility private
     def self.coolq_error(json)
       case json['retcode'].to_i
       when 0 then return json
