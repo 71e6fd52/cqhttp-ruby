@@ -13,7 +13,7 @@ module CQHTTP
     # @return [lambda]
     def self.gen(type, host)
       case type.to_sym
-      when :get then ->(url, param = nil) { Network.get URI(host + url), param }
+      when :get then ->(url) { Network.get URI(host + url) }
       when :post then ->(url, body) { Network.post URI(host + url), body }
       else raise type
       end
@@ -22,11 +22,9 @@ module CQHTTP
     # get url
     #
     # @param uri [URI]
-    # @param params [Hash] url query
     #
     # @return [Hash]
-    def self.get(uri, params = nil)
-      uri.query = URI.encode_www_form params if params
+    def self.get(uri)
       puts 'GET URL:', uri if $DEBUG
       error Net::HTTP.get_response(uri)
     end
@@ -70,6 +68,7 @@ module CQHTTP
     def self.coolq_error(json)
       case json['retcode'].to_i
       when 0 then return json
+      when 1 then return json
       when 100 then raise '参数错误'
       when 102 then raise '没有权限'
       end
