@@ -93,9 +93,12 @@ RSpec.describe CQHTTP::Network do
       @request_name = :post
     end
 
-    describe 'can work with' do
+    context 'can work with' do
       it 'number and float' do
-        http = spy('Net::HTTP', @request_name => @res.new(200, '{"retcode": 0}'))
+        http = spy(
+          'Net::HTTP',
+          @request_name => @res.new(200, '{"retcode": 0}')
+        )
         Net::HTTP = http
         expect(@method.call('/a', i: 1, f: 4.8)).to eq('retcode' => 0)
         expect(http).to have_received(@request_name).with(
@@ -105,7 +108,10 @@ RSpec.describe CQHTTP::Network do
         )
       end
       it 'number and two string' do
-        http = spy('Net::HTTP', @request_name => @res.new(200, '{"retcode": 0}'))
+        http = spy(
+          'Net::HTTP',
+          @request_name => @res.new(200, '{"retcode": 0}')
+        )
         Net::HTTP = http
         expect(@method.call('/b', i: 123_456, str: 'test', hello: 'world')).to \
           eq('retcode' => 0)
