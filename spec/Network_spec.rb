@@ -153,3 +153,4 @@ RSpec.describe CQHTTP::Network do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
