@@ -14,7 +14,16 @@ module CQHTTP
     #
     # @param event [Hash] event that need to add
     def add_event(message)
+      last = @events.last
       @events.push(message)
+      return if last.nil?
+      return if message['time'].to_i > last['time'].to_i
+      sort
+    end
+
+    # force sort events with time
+    def sort
+      @events.sort! { |a, b| a['time'].to_i <=> b['time'].to_i }
       nil
     end
 
