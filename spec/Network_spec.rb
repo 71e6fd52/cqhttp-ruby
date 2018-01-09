@@ -16,6 +16,10 @@ RSpec.describe CQHTTP::Network do
     expect(post).to be_an_instance_of Proc
   end
 
+  it 'can raise with unknow Proc type' do
+    expect { CQHTTP::Network.gen :error, '' }.to raise_error 'error'
+  end
+
   shared_examples 'clean' do
     before :each do
       Net.unset
@@ -43,7 +47,8 @@ RSpec.describe CQHTTP::Network do
           400 => 'POST 请求的 Content-Type 不正确',
           401 => 'token 不符合',
           404 => 'API 不存在',
-          405 => '请求方式不支持'
+          405 => '请求方式不支持',
+          500 => '500'
         }.each_pair do |code, error|
           it code do
             http = spy(
@@ -58,12 +63,11 @@ RSpec.describe CQHTTP::Network do
 
       context 'cqhttp error' do
         it 1 do
-          http = spy(
-            'Net::HTTP',
-            get_response: @res.new(200, '{"retcode": 1}')
-          )
+          http = spy('Net::HTTP', get_response: @res.new(200, '{"retcode": 1}'))
           Net::HTTP = http
-          expect { @method.call('/a') }
+          expect(@method.call('/a')).to eq('retcode' => 1)
+          expect(http).to \
+            have_received(:get_response).with(URI('http://localhost/a'))
         end
         it 100 do
           http = spy(
@@ -80,6 +84,14 @@ RSpec.describe CQHTTP::Network do
           )
           Net::HTTP = http
           expect { @method.call('/a') }.to raise_error '没有权限'
+        end
+        it 1234 do
+          http = spy(
+            'Net::HTTP',
+            get_response: @res.new(200, '{"retcode": 1234}')
+          )
+          Net::HTTP = http
+          expect { @method.call('/a') }.to raise_error '1234'
         end
       end
     end
@@ -122,7 +134,8 @@ RSpec.describe CQHTTP::Network do
           400 => 'POST 请求的 Content-Type 不正确',
           401 => 'token 不符合',
           404 => 'API 不存在',
-          405 => '请求方式不支持'
+          405 => '请求方式不支持',
+          500 => '500'
         }.each_pair do |code, error|
           it code do
             http = spy('Net::HTTP', post: @res.new(code, '{}'))
@@ -136,7 +149,12 @@ RSpec.describe CQHTTP::Network do
         it 1 do
           http = spy('Net::HTTP', post: @res.new(200, '{"retcode": 1}'))
           Net::HTTP = http
-          expect { @method.call('/a', a: 1) }
+          expect(@method.call('/a', a: 1)).to eq('retcode' => 1)
+          expect(http).to have_received(:post).with(
+              URI('http://localhost/a'),
+              { a: 1 }.to_json,
+              'Content-Type' => 'application/json'
+          )
         end
         it 100 do
           http = spy('Net::HTTP', post: @res.new(200, '{"retcode": 100}'))
@@ -147,6 +165,11 @@ RSpec.describe CQHTTP::Network do
           http = spy('Net::HTTP', post: @res.new(200, '{"retcode": 102}'))
           Net::HTTP = http
           expect { @method.call('/a', a: 1) }.to raise_error '没有权限'
+        end
+        it 1234 do
+          http = spy('Net::HTTP', post: @res.new(200, '{"retcode": 1234}'))
+          Net::HTTP = http
+          expect { @method.call('/a', a: 1) }.to raise_error '1234'
         end
       end
     end

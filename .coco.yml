@@ -1,0 +1,8 @@
+:include:
+  - lib
+:exclude:
+  - lib/CQHTTP.rb
+  - lib/CQHTTP/version.rb
+:single_line_report: false
+:exclude_above_threshold: false
+:show_link_in_terminal: true

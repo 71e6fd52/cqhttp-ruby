@@ -15,7 +15,7 @@ module CQHTTP
       case type.to_sym
       when :get then ->(url) { Network.get URI(host + url) }
       when :post then ->(url, body) { Network.post URI(host + url), body }
-      else raise type
+      else raise type.to_s
       end
     end
 
