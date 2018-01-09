@@ -1,5 +1,3 @@
-require 'coco'
-
 require 'CQHTTP/version'
 
 require 'CQHTTP/network'
