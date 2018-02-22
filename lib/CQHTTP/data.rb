@@ -16,6 +16,7 @@ module CQHTTP
     def add_event(message)
       last = @events.last
       @events.push(message)
+      CQHTTP.logger.debug "add event #{message}"
       return if last.nil?
       return if message['time'].to_i > last['time'].to_i
       sort!
