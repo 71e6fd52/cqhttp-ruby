@@ -18,11 +18,11 @@ module CQHTTP
       @events.push(message)
       return if last.nil?
       return if message['time'].to_i > last['time'].to_i
-      sort
+      sort!
     end
 
     # force sort events with time
-    def sort
+    def sort!
       @events.sort! { |a, b| a['time'].to_i <=> b['time'].to_i }
       nil
     end
