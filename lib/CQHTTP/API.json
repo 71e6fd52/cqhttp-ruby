@@ -1,8 +1,4 @@
-# frozen_string_literal: true
-
-require 'spec_helper'
-
-List = JSON.parse '{
+{
   "send_private_msg": {
     "user_id": null,
     "message": null,
@@ -137,24 +133,4 @@ List = JSON.parse '{
   },
   "clean_plugin_log": {
   }
-}', symbolize_names: true
-
-RSpec.describe CQHTTP::API do
-  before :all do
-    @api = CQHTTP::API.new way: :get
-  end
-
-  it 'returns a CQHTTP:API object' do
-    expect(@api).to be_an_instance_of CQHTTP::API
-  end
-
-  it 'including right func_list' do
-    expect(@api.func_list).to eq List
-  end
-
-  List.each_key do |func|
-    it 'respond to' + func.to_s do
-      expect(@api.respond_to?(func)).to be true
-    end
-  end
-end
+}
