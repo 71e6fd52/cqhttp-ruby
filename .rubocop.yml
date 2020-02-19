@@ -1,2 +1,14 @@
-Style/FileName:
+AllCops:
+  TargetRubyVersion: '2.7.0'
+Naming/FileName:
   Enabled: false
+Style/AsciiComments:
+  Enabled: false
+Lint/MissingCopEnableDirective:
+  Enabled: false
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma

@@ -3,6 +3,7 @@
 
 require 'json'
 
+# no document
 class API
   attr_reader :func_list
 
@@ -88,7 +89,8 @@ class API
   end
 
   #         |    `flag`      或 `anonymous_flag` |  string  |    -       |...
-  ARGS = /^\|\s*`(\w+)`(?:\s*或\s*`(?:\w+)`)?\s*\|\s+.+?\s+\|\s+(.+?)\s+\|/.freeze
+  ARGS = /^\|\s*`(\w+)`(?:\s*或\s*`(?:\w+)`)?\s*\|\s+.+?\s+\|\s+(.+?)\s+\|/
+         .freeze
   def get_args(file)
     args = {}
     until (line = file.gets) =~ /^$/

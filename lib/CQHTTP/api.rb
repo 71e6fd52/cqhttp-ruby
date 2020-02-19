@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
 module CQHTTP
-  # All API
+  # All API generate form https://cqhttp.cc/docs/#/API?id=api-列表
+  # Example:
+  #   @api.send_group_msg('123456', 'test') # by document order
+  #   @api.send_group_msg(group_id: '123456', message: 'test') # or use keyword
   class API
     attr_reader :func_list
 
     # init
     #
-    # host: String: API address, like 'http://localhost:5700'
-    # type: Symbol or String, 'get', 'form' or 'json'
+    # @param host [String] API address, like 'http://localhost:5700'
+    # @param way [Symbol] 'get', 'form' or 'json'
     def initialize(host: 'http://localhost:5700', way: :json)
       @func_list = File.open(File.join(File.dirname(__FILE__), 'API.json')) do
         JSON.parse(_1.read, symbolize_names: true)

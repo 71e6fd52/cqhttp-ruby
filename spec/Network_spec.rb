@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 # rubocop:disable Metrics/BlockLength
@@ -36,7 +38,7 @@ RSpec.describe CQHTTP::Network do
         400 => 'POST 请求的 Content-Type 不正确',
         401 => 'token 不符合',
         404 => 'API 不存在',
-        405 => '请求方式不支持'
+        405 => '请求方式不支持',
       }.each_pair do |code, error|
         it code do
           http = spy('Net::HTTP', @request_name => @res.new(code, '{}'))
@@ -109,7 +111,7 @@ RSpec.describe CQHTTP::Network do
                        { i: 1, str1: 'test', other: 'another' },
                        [
                          URI('http://localhost/a'),
-                         { i: 1, str1: 'test', other: 'another' }
+                         { i: 1, str1: 'test', other: 'another' },
                        ]
     end
   end
@@ -130,7 +132,7 @@ RSpec.describe CQHTTP::Network do
                        [
                          URI('http://localhost/a'),
                          { a: 1 }.to_json,
-                         { 'Content-Type' => 'application/json' }
+                         { 'Content-Type' => 'application/json' },
                        ]
 
       include_examples 'work',
@@ -139,7 +141,7 @@ RSpec.describe CQHTTP::Network do
                        [
                          URI('http://localhost/a'),
                          { i: 1, f: 4.8 }.to_json,
-                         { 'Content-Type' => 'application/json' }
+                         { 'Content-Type' => 'application/json' },
                        ]
 
       include_examples 'work',
@@ -148,7 +150,7 @@ RSpec.describe CQHTTP::Network do
                        [
                          URI('http://localhost/a'),
                          { i: 1, str1: 'test', other: 'another' }.to_json,
-                         { 'Content-Type' => 'application/json' }
+                         { 'Content-Type' => 'application/json' },
                        ]
     end
   end

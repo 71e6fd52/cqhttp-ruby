@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 # rubocop:disable Metrics/BlockLength
@@ -21,7 +23,7 @@ RSpec.describe CQHTTP::API do
         Net::HTTP = http
         expect(@api.get_login_info).to eq({})
         expect(http).to have_received(:get_response).with(
-          URI('http://localhost:5700/get_login_info?')
+          URI('http://localhost:5700/get_login_info?'),
         )
       end
 
@@ -30,7 +32,7 @@ RSpec.describe CQHTTP::API do
         Net::HTTP = http
         expect(@api.send_group_msg('123456', 'test')).to eq({})
         expect(http).to have_received(:get_response).with(
-          URI('http://localhost:5700/send_group_msg?group_id=123456&message=test&auto_escape=false')
+          URI('http://localhost:5700/send_group_msg?group_id=123456&message=test&auto_escape=false'),
         )
       end
     end
@@ -55,7 +57,18 @@ RSpec.describe CQHTTP::API do
         expect(@api.send_group_msg('123456', 'test')).to eq({})
         expect(http).to have_received(:post_form).with(
           URI('http://localhost:5700/send_group_msg'),
-          group_id: '123456', message: 'test', auto_escape: false
+          group_id: '123456', message: 'test', auto_escape: false,
+        )
+      end
+
+      it 'send_group_msg whth keywork params' do
+        http = spy('Net::HTTP', post_form: @res.new(200, '{}'))
+        Net::HTTP = http
+        expect(@api.send_group_msg(group_id: '123456', message: 'test'))
+          .to eq({})
+        expect(http).to have_received(:post_form).with(
+          URI('http://localhost:5700/send_group_msg'),
+          group_id: '123456', message: 'test', auto_escape: false,
         )
       end
     end

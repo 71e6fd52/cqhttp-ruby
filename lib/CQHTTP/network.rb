@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CQHTTP
   # get, post
   #
@@ -7,9 +9,10 @@ module CQHTTP
   module Network
     # gen lambda
     #
-    # type: Symbol or String, 'get', 'form' or 'json;
-    # host: String: API address, like 'http://localhost:5700'
-    def self.gen(type, host) # => lambda
+    # @param type [Symbol] 'get', 'form' or 'json'
+    # @param host [String] API address, like 'http://localhost:5700'
+    # @return lambda
+    def self.gen(type, host)
       case type.to_sym
       when :get then ->(url, param = nil) { Network.get URI(host + url), param }
       when :form then ->(url, body) { Network.post_form URI(host + url), body }
@@ -20,9 +23,10 @@ module CQHTTP
 
     # get url
     #
-    # uri: URI
-    # params (optional): Hash, url query
-    def self.get(uri, params = nil) # => Hash
+    # @param uri [URI]
+    # @param params [Hash] url query
+    # @return Hash
+    def self.get(uri, params = nil)
       uri.query = URI.encode_www_form params if params
       puts 'GET URL:', uri if $DEBUG
       error Net::HTTP.get_response(uri)
@@ -30,33 +34,41 @@ module CQHTTP
 
     # post to url by form
     #
-    # uri: URI
-    # body: Hash, post body
-    def self.post_form(uri, body) # => Hash
+    # @param uri [URI]
+    # @param body [Hash] post body
+    # @return Hash
+    def self.post_form(uri, body)
       puts 'POST URL:', uri if $DEBUG
       error Net::HTTP.post_form(uri, body)
     end
 
     # post to url by json
     #
-    # uri: URI
-    # body: Hash, post body
+    # @param uri [URI]
+    # @param body [Hash] post body
+    # @return Hash
     def self.post_json(uri, body)
       puts 'POST URL:', uri if $DEBUG
       puts 'POST JSON:', JSON.pretty_generate(body) if $DEBUG
       error Net::HTTP.post(
         uri,
         body.to_json,
-        'Content-Type' => 'application/json'
+        'Content-Type' => 'application/json',
       )
     end
 
-    private_class_method
-
+    # handle result error
+    #
+    # @param res [Net::HTTPResponse]
+    # @return Hash
     def self.error(res)
       coolq_error http_error res
     end
 
+    # unwrap http response
+    #
+    # @param res [Net::HTTPResponse]
+    # @return Hash
     def self.http_error(res)
       case res.code.to_i
       when 200 then return JSON.parse res.body
@@ -68,6 +80,10 @@ module CQHTTP
       raise res.code.to_s
     end
 
+    # handle coolq error
+    #
+    # @param json [Hash]
+    # @return Hash
     def self.coolq_error(json)
       case json['retcode'].to_i
       when 0 then return json
