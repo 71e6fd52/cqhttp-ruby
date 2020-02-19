@@ -25,7 +25,7 @@ RSpec.describe CQHTTP::Network do
     it name do
       http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
       Net::HTTP = http
-      expect(@method.send('/a', send)).to eq({})
+      expect(@method.send_req('a', send)).to eq({})
       expect(http).to have_received(@request_name).with(*get)
     end
   end
@@ -42,7 +42,7 @@ RSpec.describe CQHTTP::Network do
         it code do
           http = spy('Net::HTTP', @request_name => @res.new(code, '{}'))
           Net::HTTP = http
-          expect { @method.send('/a', a: 1) }.to raise_error error
+          expect { @method.send_req('a', { a: 1 }) }.to raise_error error
         end
       end
     end
@@ -87,7 +87,7 @@ RSpec.describe CQHTTP::Network do
         a = CQHTTP::Network.new :get, 'http://localhost', 'abc'
         http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
         Net::HTTP = http
-        expect(a.send('/a', a: 1)).to eq({})
+        expect(a.send_req('a', { a: 1 })).to eq({})
         expect(http).to have_received(@request_name).with(URI('http://localhost/a?a=1&access_token=abc'))
       end
     end
@@ -163,7 +163,7 @@ RSpec.describe CQHTTP::Network do
         a = CQHTTP::Network.new :json, 'http://localhost', 'abc'
         http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
         Net::HTTP = http
-        expect(a.send('/a', a: 1)).to eq({})
+        expect(a.send_req('a', { a: 1 })).to eq({})
         expect(http).to have_received(@request_name).with(
           URI('http://localhost/a'),
           { a: 1 }.to_json,

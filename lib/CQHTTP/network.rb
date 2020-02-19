@@ -5,7 +5,7 @@ module CQHTTP
   #
   # Example:
   #   network = Network.new :get, 'http://localhost:5700'
-  #   json = network.send '/get_login_info'
+  #   json = network.send_req '/get_login_info'
   class Network
     # @param type [Symbol] 'get', 'form' or 'json'
     # @param host [String] API address, like 'http://localhost:5700'
@@ -23,7 +23,7 @@ module CQHTTP
     # @param url [String] api path
     # @param body [Hash] api argument
     # @param type [Symbol] override default type
-    def send(url, body, type: nil)
+    def send_req(url, body, type: nil)
       type = type&.to_sym || @type
       raise type unless %i[get form json].include? type
 
@@ -97,10 +97,10 @@ module CQHTTP
     def http_error(res)
       case res.code.to_i
       when 200 then return JSON.parse res.body
-      when 405 then raise '请求方式不支持'
-      when 401 then raise 'token 不符合'
       when 400 then raise 'POST 请求的 Content-Type 不正确'
+      when 401 then raise 'token 不符合'
       when 404 then raise 'API 不存在'
+      when 405 then raise '请求方式不支持'
       end
       raise res.code.to_s
     end
