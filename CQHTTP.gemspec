@@ -31,6 +31,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bump'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'simplecov-lcov'
   spec.add_development_dependency 'solargraph'
 
   spec.add_dependency 'ruby-dbus', '~> 0.14.0'

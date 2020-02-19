@@ -39,6 +39,7 @@ RSpec.describe CQHTTP::Network do
         401 => 'token 不符合',
         404 => 'API 不存在',
         405 => '请求方式不支持',
+        418 => '418',
       }.each_pair do |code, error|
         it code do
           http = spy('Net::HTTP', @request_name => @res.new(code, '{}'))
