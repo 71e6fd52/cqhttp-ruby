@@ -4,21 +4,30 @@ module CQHTTP
   # get, post
   #
   # Example:
-  #   get = Network.gen :get, 'http://localhost:5700'
-  #   json = get.call '/get_login_info'
-  module Network
-    # gen lambda
-    #
+  #   network = Network.new :get, 'http://localhost:5700'
+  #   json = network.send '/get_login_info'
+  class Network
     # @param type [Symbol] 'get', 'form' or 'json'
     # @param host [String] API address, like 'http://localhost:5700'
-    # @return lambda
-    def self.gen(type, host)
-      case type.to_sym
-      when :get then ->(url, param = nil) { Network.get URI(host + url), param }
-      when :form then ->(url, body) { Network.post_form URI(host + url), body }
-      when :json then ->(url, body) { Network.post_json URI(host + url), body }
-      else raise type
-      end
+    # @param token [String] access_token
+    def initialize(type, host, token = nil)
+      @host = host
+      @token = token
+      @type = type.to_sym
+      raise @type unless %i[get form json].include? @type
+      raise 'Not supporting auth for form' if @type == :form && !token.nil?
+    end
+
+    # send api request
+    #
+    # @param url [String] api path
+    # @param body [Hash] api argument
+    # @param type [Symbol] override default type
+    def send(url, body, type: nil)
+      type = type&.to_sym || @type
+      raise type unless %i[get form json].include? type
+
+      method(type).call(url, body)
     end
 
     # get url
@@ -26,7 +35,9 @@ module CQHTTP
     # @param uri [URI]
     # @param params [Hash] url query
     # @return Hash
-    def self.get(uri, params = nil)
+    def get(uri, params = nil)
+      uri = full_uri(uri)
+      params = (params || {}).merge(access_token: @token) unless @token.nil?
       uri.query = URI.encode_www_form params if params
       puts 'GET URL:', uri if $DEBUG
       error Net::HTTP.get_response(uri)
@@ -37,31 +48,45 @@ module CQHTTP
     # @param uri [URI]
     # @param body [Hash] post body
     # @return Hash
-    def self.post_form(uri, body)
+    def post_form(uri, body)
+      raise 'Not supporting auth for form' unless @token.nil?
+
+      uri = full_uri(uri)
       puts 'POST URL:', uri if $DEBUG
       error Net::HTTP.post_form(uri, body)
     end
+    alias form post_form
 
     # post to url by json
     #
     # @param uri [URI]
     # @param body [Hash] post body
     # @return Hash
-    def self.post_json(uri, body)
+    def post_json(uri, body)
+      uri = full_uri(uri)
       puts 'POST URL:', uri if $DEBUG
       puts 'POST JSON:', JSON.pretty_generate(body) if $DEBUG
       error Net::HTTP.post(
         uri,
         body.to_json,
-        'Content-Type' => 'application/json',
+        { 'Content-Type' => 'application/json' }.merge(
+          @token&.then { { 'Authorization' => "Bearer #{_1}" } } || {},
+        ),
       )
+    end
+    alias json post_json
+
+    private
+
+    def full_uri(uri)
+      URI(@host + uri)
     end
 
     # handle result error
     #
     # @param res [Net::HTTPResponse]
     # @return Hash
-    def self.error(res)
+    def error(res)
       coolq_error http_error res
     end
 
@@ -69,7 +94,7 @@ module CQHTTP
     #
     # @param res [Net::HTTPResponse]
     # @return Hash
-    def self.http_error(res)
+    def http_error(res)
       case res.code.to_i
       when 200 then return JSON.parse res.body
       when 405 then raise '请求方式不支持'
@@ -84,7 +109,7 @@ module CQHTTP
     #
     # @param json [Hash]
     # @return Hash
-    def self.coolq_error(json)
+    def coolq_error(json)
       case json['retcode'].to_i
       when 0 then return json
       when 1 then return json

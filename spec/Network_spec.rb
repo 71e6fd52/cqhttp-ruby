@@ -1,20 +1,18 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-
-# rubocop:disable Metrics/BlockLength
 RSpec.describe CQHTTP::Network do
   before :all do
     @res = Struct.new(:code, :body)
   end
 
-  it 'returns three Proc object' do
-    get = CQHTTP::Network.gen :get, ''
-    json = CQHTTP::Network.gen :json, ''
-    form = CQHTTP::Network.gen :form, ''
-    expect(get).to be_an_instance_of Proc
-    expect(json).to be_an_instance_of Proc
-    expect(form).to be_an_instance_of Proc
+  it 'init' do
+    get = CQHTTP::Network.new :get, ''
+    json = CQHTTP::Network.new :json, ''
+    form = CQHTTP::Network.new :form, ''
+    expect(get).to be_an_instance_of CQHTTP::Network
+    expect(json).to be_an_instance_of CQHTTP::Network
+    expect(form).to be_an_instance_of CQHTTP::Network
   end
 
   shared_examples 'clean' do
@@ -27,7 +25,7 @@ RSpec.describe CQHTTP::Network do
     it name do
       http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
       Net::HTTP = http
-      expect(@method.call('/a', send)).to eq({})
+      expect(@method.send('/a', send)).to eq({})
       expect(http).to have_received(@request_name).with(*get)
     end
   end
@@ -44,7 +42,7 @@ RSpec.describe CQHTTP::Network do
         it code do
           http = spy('Net::HTTP', @request_name => @res.new(code, '{}'))
           Net::HTTP = http
-          expect { @method.call('/a', a: 1) }.to raise_error error
+          expect { @method.send('/a', a: 1) }.to raise_error error
         end
       end
     end
@@ -55,7 +53,7 @@ RSpec.describe CQHTTP::Network do
     include_examples 'error', :get_response
 
     before :all do
-      @method = CQHTTP::Network.gen :get, 'http://localhost'
+      @method = CQHTTP::Network.new :get, 'http://localhost'
       @request_name = :get_response
     end
 
@@ -84,6 +82,14 @@ RSpec.describe CQHTTP::Network do
                        'encode string',
                        { str: '😂' },
                        [URI('http://localhost/a?str=%F0%9F%98%82')]
+
+      it 'auth' do
+        a = CQHTTP::Network.new :get, 'http://localhost', 'abc'
+        http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
+        Net::HTTP = http
+        expect(a.send('/a', a: 1)).to eq({})
+        expect(http).to have_received(@request_name).with(URI('http://localhost/a?a=1&access_token=abc'))
+      end
     end
   end
 
@@ -92,7 +98,7 @@ RSpec.describe CQHTTP::Network do
     include_examples 'error'
 
     before :all do
-      @method = CQHTTP::Network.gen :form, 'http://localhost'
+      @method = CQHTTP::Network.new :form, 'http://localhost'
       @request_name = :post_form
     end
 
@@ -117,12 +123,12 @@ RSpec.describe CQHTTP::Network do
     end
   end
 
-  describe '#post_lson' do
+  describe '#post_json' do
     include_examples 'clean'
     include_examples 'error'
 
     before :all do
-      @method = CQHTTP::Network.gen :json, 'http://localhost'
+      @method = CQHTTP::Network.new :json, 'http://localhost'
       @request_name = :post
     end
 
@@ -153,6 +159,18 @@ RSpec.describe CQHTTP::Network do
                          { i: 1, str1: 'test', other: 'another' }.to_json,
                          { 'Content-Type' => 'application/json' },
                        ]
+      it 'auth' do
+        a = CQHTTP::Network.new :json, 'http://localhost', 'abc'
+        http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
+        Net::HTTP = http
+        expect(a.send('/a', a: 1)).to eq({})
+        expect(http).to have_received(@request_name).with(
+          URI('http://localhost/a'),
+          { a: 1 }.to_json,
+          { 'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer abc' },
+        )
+      end
     end
   end
 end

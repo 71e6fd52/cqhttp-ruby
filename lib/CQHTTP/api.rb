@@ -12,11 +12,11 @@ module CQHTTP
     #
     # @param host [String] API address, like 'http://localhost:5700'
     # @param way [Symbol] 'get', 'form' or 'json'
-    def initialize(host: 'http://localhost:5700', way: :json)
+    def initialize(host: 'http://localhost:5700', way: :json, token: nil)
       @func_list = File.open(File.join(File.dirname(__FILE__), 'API.json')) do
         JSON.parse(_1.read, symbolize_names: true)
       end.freeze
-      @network = CQHTTP::Network.gen way, host
+      @network = CQHTTP::Network.new(way, host, token)
     end
 
     def respond_to_missing?(method, include_private = false)
@@ -64,7 +64,7 @@ module CQHTTP
 
     def call_network(name, args)
       url = '/' + name.to_s
-      @network.call(url, args)
+      @network.send(url, args)
     end
   end
 end
