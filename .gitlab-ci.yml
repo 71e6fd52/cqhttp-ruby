@@ -1,0 +1,14 @@
+image: ruby:2.7.0
+before_script:
+  - ruby -v
+  - which ruby
+  - gem install bundler --no-document
+  - bin/setup
+
+rspec:
+  script:
+    - bundle exec rake spec
+
+rubocop:
+  script:
+    - bundle exec rubocop
