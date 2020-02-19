@@ -11,6 +11,7 @@ module CQHTTP
     # @param host [String] API address, like 'http://localhost:5700'
     # @param token [String] access_token
     def initialize(type, host, token = nil)
+      host += '/' unless host.end_with? '/'
       @host = host
       @token = token
       @type = type.to_sym
@@ -29,6 +30,7 @@ module CQHTTP
 
       method(type).call(url, body)
     end
+    alias call send_req
 
     # get url
     #

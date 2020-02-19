@@ -11,12 +11,20 @@ module CQHTTP
     # init
     #
     # @param host [String] API address, like 'http://localhost:5700'
-    # @param way [Symbol] 'get', 'form' or 'json'
-    def initialize(host: 'http://localhost:5700', way: :json, token: nil)
+    # @param way [Symbol] 'get', 'form', 'json' or 'callback'
+    # @param callback [Proc] only need if `way` is `callback`
+    def initialize(host: 'http://localhost:5700', way: :json, token: nil,
+                   callback: nil)
       @func_list = File.open(File.join(File.dirname(__FILE__), 'API.json')) do
         JSON.parse(_1.read, symbolize_names: true)
       end.freeze
-      @network = CQHTTP::Network.new(way, host, token)
+      if way.to_sym == :callback
+        raise 'Not pass callback' if callback.nil?
+
+        @network = callback
+      else
+        @network = CQHTTP::Network.new(way, host, token)
+      end
     end
 
     def respond_to_missing?(method, include_private = false)
@@ -63,8 +71,7 @@ module CQHTTP
     end
 
     def call_network(name, args)
-      url = '/' + name.to_s
-      @network.send(url, args)
+      @network.call(name.to_s, args)
     end
   end
 end

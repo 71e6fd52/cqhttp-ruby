@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
+
 require 'spec_helper'
 RSpec.describe CQHTTP::Network do
   before :all do
