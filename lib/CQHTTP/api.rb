@@ -36,15 +36,19 @@ module CQHTTP
 
     # All API generated form
     #  [API 描述] (https://cqhttp.cc/docs/#/API?id=api-列表)
+    # @note Don't pass argument by both argument and keyword
+    # @param args [Array<Object>]
+    # @param args_kw [Hash<Symbol, Object>]
+    # @return [Hash]
     # @example
     #   @api.send_group_msg('123456', 'test') # by document order
     #   @api.send_group_msg(group_id: '123456', message: 'test') # use keyword
-    def method_missing(name, *user_args)
+    def method_missing(name, *args, **args_kw)
       return super unless respond_to_missing? name
+      return super unless args.empty? || args_kw.empty?
 
-      args = gen_args name, user_args
+      args = gen_args name, args, args_kw
       args.freeze
-      return super if args.nil?
       return super if args.value? nil
 
       call_network name, args
@@ -56,26 +60,25 @@ module CQHTTP
     #                             api_call                             #
     ####################################################################
 
-    def gen_args(name, user_args)
+    def gen_args(name, args_arr, args_kw)
       args = @func_list[name.to_sym]
-      return {} if args == {}
-      return hash_to_args(args, user_args) if user_args[0].class == {}.class
-
-      array_to_args(args, user_args)
+      if args_arr.empty?
+        if args_kw.empty?
+          {}
+        else
+          hash_to_args(args, args_kw)
+        end
+      else
+        array_to_args(args, args_arr)
+      end
     end
 
     def hash_to_args(default, user)
-      return unless user.size == 1
-
-      default.merge(user[0].delete_if { |key, _value| !default.key? key })
+      default.merge(user.delete_if { |key, _value| !default.key? key })
     end
 
     def array_to_args(default, user)
-      return if user.size > default.size
-
-      it = default.each_key
-      args = user.each_with_object({}) { |value, obj| obj[it.next] = value }
-      hash_to_args default, [args]
+      default.zip(user).map { |(k, d), v| [k, v || d] }.to_h
     end
 
     def call_network(name, args)
