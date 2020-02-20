@@ -1,4 +1,8 @@
-# CQHTTP ([中文](/README.md))
+# CQHTTP ([中文](README.md))
+
+[![gem version](https://img.shields.io/gem/v/CQHTTP)](https://rubygems.org/gems/CQHTTP)
+[![yard docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/gems/CQHTTP)
+[![pipeline status](https://gitlab.com/71e6fd52/cqhttp-ruby/badges/master/pipeline.svg)](https://gitlab.com/71e6fd52/cqhttp-ruby/pipelines)
 
 This gem can make you use [richardchien/coolq-http-api](https://github.com/richardchien/coolq-http-api) in ruby.
 
@@ -17,16 +21,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install CQHTTP
-
-## Usage
-
-TODO: Write usage instructions here
-
-### D-Bus
-
-Service: `org.dastudio.qq`
-Object path: `/org/dastudio/qq`
-Interface: `org.dastudio.cqhttp`
 
 ## Development
 
