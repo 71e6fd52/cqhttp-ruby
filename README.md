@@ -22,6 +22,18 @@ gem 'CQHTTP'
 
     $ gem install CQHTTP
 
+## 使用
+
+```ruby
+require 'CQHTTP'
+
+api = CQHTTP::API.new(host: 'http://localhost:5700')
+group = api.get_group_list
+group.map { _1['group_id'] }.each do
+  api.send_group_msg(group_id: _1, message: '大家早上好')
+end
+```
+
 ## 开发
 
 检出这个仓库后，运行 `bin/setup` 来安装依赖关系。然后，运行 `rake spec` 来运行测试。 您还可以运行 `bin/console` 启动交互式提示符(`irb`)，让您进行实验。

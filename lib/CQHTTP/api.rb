@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 
 module CQHTTP
-  # All API generate form https://cqhttp.cc/docs/#/API?id=api-列表
-  # Example:
-  #   @api.send_group_msg('123456', 'test') # by document order
-  #   @api.send_group_msg(group_id: '123456', message: 'test') # or use keyword
+  # Call API
+  #
+  # @example
+  #   @api = CQHTTP::API.new
+  #   @api.send_group_msg(group_id: '123456', message: 'test')
   class API
+    # @return [Hash] api list with method as the key and arguments as values
     attr_reader :func_list
 
     # init
     #
     # @param host [String] API address, like 'http://localhost:5700'
-    # @param way [Symbol] 'get', 'form', 'json' or 'callback'
+    # @param way [:get, :form, :json, :callback] the way sending request
+    # @param token [String] [access token](https://cqhttp.cc/docs/#/API?id=请求方式)
     # @param callback [Proc] only need if `way` is `callback`
     def initialize(host: 'http://localhost:5700', way: :json, token: nil,
                    callback: nil)
@@ -31,6 +34,11 @@ module CQHTTP
       @func_list.include?(method) || super
     end
 
+    # All API generated form
+    #  [API 描述] (https://cqhttp.cc/docs/#/API?id=api-列表)
+    # @example
+    #   @api.send_group_msg('123456', 'test') # by document order
+    #   @api.send_group_msg(group_id: '123456', message: 'test') # use keyword
     def method_missing(name, *user_args)
       return super unless respond_to_missing? name
 

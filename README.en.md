@@ -22,6 +22,18 @@ Or install it yourself as:
 
     $ gem install CQHTTP
 
+## Usage
+
+```ruby
+require 'CQHTTP'
+
+api = CQHTTP::API.new(host: 'http://localhost:5700')
+group = api.get_group_list
+group.map { _1['group_id'] }.each do
+  api.send_group_msg(group_id: _1, message: 'Good morning everyone')
+end
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

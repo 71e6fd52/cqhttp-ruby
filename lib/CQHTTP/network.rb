@@ -7,7 +7,7 @@ module CQHTTP
   #   network = Network.new :get, 'http://localhost:5700'
   #   json = network.send_req '/get_login_info'
   class Network
-    # @param type [Symbol] 'get', 'form' or 'json'
+    # @param type [:get, :form, :json] the way sending request
     # @param host [String] API address, like 'http://localhost:5700'
     # @param token [String] access_token
     def initialize(type, host, token = nil)
@@ -47,6 +47,7 @@ module CQHTTP
 
     # post to url by form
     #
+    # @note not supporting access_token
     # @param uri [URI]
     # @param body [Hash] post body
     # @return Hash
