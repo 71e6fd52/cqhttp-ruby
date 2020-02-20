@@ -3,6 +3,7 @@
 [![gem version](https://img.shields.io/gem/v/CQHTTP)](https://rubygems.org/gems/CQHTTP)
 [![yard docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/gems/CQHTTP)
 [![pipeline status](https://gitlab.com/71e6fd52/cqhttp-ruby/badges/master/pipeline.svg)](https://gitlab.com/71e6fd52/cqhttp-ruby/pipelines)
+[![inline docs](http://inch-ci.org/github/71e6fd52/cqhttp-ruby.svg?branch=master)](http://inch-ci.org/github/71e6fd52/cqhttp-ruby)
 
 在 ruby 中使用 [richardchien/coolq-http-api](https://github.com/richardchien/coolq-http-api)。
 
