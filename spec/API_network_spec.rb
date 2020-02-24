@@ -12,12 +12,19 @@ RSpec.describe CQHTTP::API do
     Net.unset
   end
 
-  shared_examples 'work' do |name, send, get|
+  shared_examples 'work' do |name, (method, *args), get, async_get|
     it name do
       http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
       Net::HTTP = http
-      expect(send.call(@api)).to eq({})
+      expect(@api.send(method, *args)).to eq({})
       expect(http).to have_received(@request_name).with(*get)
+    end
+
+    it name + ' async' do
+      http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
+      Net::HTTP = http
+      expect(@api.send(method.to_s + '_async', *args)).to be_nil
+      expect(http).to have_received(@request_name).with(*async_get)
     end
   end
 
@@ -31,15 +38,17 @@ RSpec.describe CQHTTP::API do
       include_examples(
         'work',
         'get_login_info',
-        proc { _1.get_login_info },
+        [:get_login_info],
         [URI('http://localhost:5700/get_login_info?')],
+        [URI('http://localhost:5700/get_login_info_async?')],
       )
 
       include_examples(
         'work',
         'send_group_msg',
-        proc { _1.send_group_msg('123456', 'test') },
+        [:send_group_msg, '123456', 'test'],
         [URI('http://localhost:5700/send_group_msg?group_id=123456&message=test&auto_escape=false')],
+        [URI('http://localhost:5700/send_group_msg_async?group_id=123456&message=test&auto_escape=false')],
       )
     end
 
@@ -52,15 +61,18 @@ RSpec.describe CQHTTP::API do
       include_examples(
         'work',
         'get_login_info',
-        proc { _1.get_login_info },
+        [:get_login_info],
         [URI('http://localhost:5700/get_login_info'), {}],
+        [URI('http://localhost:5700/get_login_info_async'), {}],
       )
 
       include_examples(
         'work',
         'send_group_msg',
-        proc { _1.send_group_msg('123456', 'test') },
+        [:send_group_msg, '123456', 'test'],
         [URI('http://localhost:5700/send_group_msg'),
+         { group_id: '123456', message: 'test', auto_escape: false }],
+        [URI('http://localhost:5700/send_group_msg_async'),
          { group_id: '123456', message: 'test', auto_escape: false }],
       )
 
@@ -90,14 +102,19 @@ RSpec.describe CQHTTP::API do
 
       it 'get_login_info' do
         expect(@api.get_login_info).to be @return
-        expect(@double).to have_received(:call).with('get_login_info', {})
+        expect(@double).to have_received(:call).with(
+          'get_login_info',
+          {},
+          instance_of(Hash),
+        )
       end
 
       it 'send_group_msg' do
         expect(@api.send_group_msg('123456', 'test')).to be @return
         expect(@double).to have_received(:call).with(
           'send_group_msg',
-          group_id: '123456', message: 'test', auto_escape: false,
+          { group_id: '123456', message: 'test', auto_escape: false },
+          instance_of(Hash),
         )
       end
     end

@@ -30,6 +30,13 @@ RSpec.describe CQHTTP::Network do
       expect(@method.send_req('a', send)).to eq({})
       expect(http).to have_received(@request_name).with(*get)
     end
+
+    it name + ' without result' do
+      http = spy('Net::HTTP', @request_name => @res.new(200, '{}'))
+      Net::HTTP = http
+      expect(@method.send_req('a', send, result: false)).to be_nil
+      expect(http).to have_received(@request_name).with(*get)
+    end
   end
 
   shared_examples 'error' do

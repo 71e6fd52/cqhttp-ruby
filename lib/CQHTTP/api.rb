@@ -31,7 +31,10 @@ module CQHTTP
     end
 
     def respond_to_missing?(method, include_private = false)
-      @func_list.include?(method) || super
+      @func_list.include?(method.to_sym) ||
+        method.to_s.then { _1.end_with?('_async') &&
+          respond_to_missing?(_1[..-7]) } ||
+        super
     end
 
     # All API generated form
@@ -45,13 +48,14 @@ module CQHTTP
     #   @api.send_group_msg(group_id: '123456', message: 'test') # use keyword
     def method_missing(name, *args, **args_kw)
       return super unless respond_to_missing? name
-      return super unless args.empty? || args_kw.empty?
 
-      args = gen_args name, args, args_kw
+      (name_base, sync) = name.to_s.match(/^(.+?)(_async)?$/)
+                              .then { |m| [m[1].to_sym, m[2].nil?] }
+      args = gen_args name_base, args, args_kw
       args.freeze
-      return super if args.value? nil
+      raise ArgumentError, 'not privide enough argument' if args.value? nil
 
-      call_network name, args
+      @network.call(name.to_s, args, result: sync)
     end
 
     private
@@ -79,10 +83,6 @@ module CQHTTP
 
     def array_to_args(default, user)
       default.zip(user).map { |(k, d), v| [k, v || d] }.to_h
-    end
-
-    def call_network(name, args)
-      @network.call(name.to_s, args)
     end
   end
 end

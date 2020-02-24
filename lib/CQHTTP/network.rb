@@ -24,11 +24,12 @@ module CQHTTP
     # @param url [String] api path
     # @param body [Hash] api argument
     # @param type [Symbol] override default type
-    def send_req(url, body, type: nil)
+    # @param result [Boolean] return result
+    def send_req(url, body, type: nil, result: true)
       type = type&.to_sym || @type
       raise type unless %i[get form json].include? type
 
-      method(type).call(url, body)
+      method(type).call(url, body, result: result)
     end
     alias call send_req
 
@@ -36,13 +37,14 @@ module CQHTTP
     #
     # @param uri [URI]
     # @param params [Hash] url query
-    # @return Hash
-    def get(uri, params = nil)
+    # @param result [Boolean] return result
+    # @return [Hash]
+    def get(uri, params = nil, result: true)
       uri = full_uri(uri)
       params = (params || {}).merge(access_token: @token) unless @token.nil?
       uri.query = URI.encode_www_form params if params
       puts 'GET URL:', uri if $DEBUG
-      error Net::HTTP.get_response(uri)
+      error Net::HTTP.get_response(uri), result
     end
 
     # post to url by form
@@ -50,13 +52,14 @@ module CQHTTP
     # @note not supporting access_token
     # @param uri [URI]
     # @param body [Hash] post body
-    # @return Hash
-    def post_form(uri, body)
+    # @param result [Boolean] return result
+    # @return [Hash]
+    def post_form(uri, body, result: true)
       raise 'Not supporting auth for form' unless @token.nil?
 
       uri = full_uri(uri)
       puts 'POST URL:', uri if $DEBUG
-      error Net::HTTP.post_form(uri, body)
+      error Net::HTTP.post_form(uri, body), result
     end
     alias form post_form
 
@@ -64,8 +67,9 @@ module CQHTTP
     #
     # @param uri [URI]
     # @param body [Hash] post body
-    # @return Hash
-    def post_json(uri, body)
+    # @param result [Boolean] return result
+    # @return [Hash]
+    def post_json(uri, body, result: true)
       uri = full_uri(uri)
       puts 'POST URL:', uri if $DEBUG
       puts 'POST JSON:', JSON.pretty_generate(body) if $DEBUG
@@ -75,7 +79,7 @@ module CQHTTP
         { 'Content-Type' => 'application/json' }.merge(
           @token&.then { { 'Authorization' => "Bearer #{_1}" } } || {},
         ),
-      )
+      ), result
     end
     alias json post_json
 
@@ -88,18 +92,21 @@ module CQHTTP
     # handle result error
     #
     # @param res [Net::HTTPResponse]
+    # @param result [Boolean] return result
     # @return Hash
-    def error(res)
-      coolq_error http_error res
+    def error(res, result = true)
+      http_error res
+      return unless result
+
+      coolq_error JSON.parse res.body
     end
 
-    # unwrap http response
+    # handle http response
     #
     # @param res [Net::HTTPResponse]
-    # @return Hash
     def http_error(res)
       case res.code.to_i
-      when 200 then return JSON.parse res.body
+      when 200 then return
       when 400 then raise 'POST 请求的 Content-Type 不正确'
       when 401 then raise 'token 不符合'
       when 404 then raise 'API 不存在'
